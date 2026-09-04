@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" width="1200" height="1200">
+  <defs>
+    <radialGradient id="leafGrad4" cx="40%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#4ade80"/>
+      <stop offset="40%" stop-color="#22c55e"/>
+      <stop offset="75%" stop-color="#16a34a"/>
+      <stop offset="100%" stop-color="#15803d"/>
+    </radialGradient>
+    <radialGradient id="rust1" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#c2410c"/>
+      <stop offset="40%" stop-color="#ea580c"/>
+      <stop offset="70%" stop-color="#f97316"/>
+      <stop offset="100%" stop-color="#16a34a"/>
+    </radialGradient>
+    <filter id="shadow4">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+    <filter id="rustTexture">
+      <feTurbulence type="fractalNoise" baseFrequency="0.12" numOctaves="4"/>
+      <feDisplacementMap in="SourceGraphic" scale="4"/>
+    </filter>
+  </defs>
+  
+  <rect width="1200" height="1200" fill="#0f1a0f"/>
+  
+  <g filter="url(#shadow4)">
+    <path d="M600 150 
+             C450 200, 280 350, 230 550
+             C180 750, 280 950, 450 1050
+             C520 1090, 580 1100, 600 1100
+             C620 1100, 680 1090, 750 1050
+             C920 950, 1020 750, 970 550
+             C920 350, 750 200, 600 150Z" 
+          fill="url(#leafGrad4)"/>
+  </g>
+  
+  <!-- Rust pustules - raised orange bumps -->
+  <g filter="url(#rustTexture)">
+    <ellipse cx="380" cy="400" rx="25" ry="18" fill="url(#rust1)" opacity="0.9"/>
+    <ellipse cx="380" cy="400" rx="15" ry="10" fill="#c2410c" opacity="0.7"/>
+    
+    <ellipse cx="720" cy="350" rx="20" ry="15" fill="url(#rust1)" opacity="0.85"/>
+    <ellipse cx="720" cy="350" rx="12" ry="8" fill="#ea580c" opacity="0.6"/>
+    
+    <ellipse cx="550" cy="550" rx="22" ry="16" fill="url(#rust1)" opacity="0.8"/>
+    <ellipse cx="550" cy="550" rx="13" ry="9" fill="#c2410c" opacity="0.65"/>
+    
+    <ellipse cx="800" cy="600" rx="18" ry="14" fill="url(#rust1)" opacity="0.75"/>
+    
+    <ellipse cx="420" cy="700" rx="20" ry="15" fill="url(#rust1)" opacity="0.8"/>
+    <ellipse cx="420" cy="700" rx="11" ry="8" fill="#ea580c" opacity="0.6"/>
+    
+    <ellipse cx="650" cy="780" rx="16" ry="12" fill="url(#rust1)" opacity="0.7"/>
+    
+    <ellipse cx="500" cy="880" rx="14" ry="10" fill="url(#rust1)" opacity="0.65"/>
+    
+    <!-- Small scattered pustules -->
+    <circle cx="450" cy="480" r="6" fill="#ea580c" opacity="0.7"/>
+    <circle cx="680" cy="450" r="5" fill="#c2410c" opacity="0.6"/>
+    <circle cx="580" cy="650" r="7" fill="#f97316" opacity="0.6"/>
+    <circle cx="750" cy="750" r="5" fill="#ea580c" opacity="0.55"/>
+    <circle cx="350" cy="550" r="4" fill="#c2410c" opacity="0.5"/>
+    <circle cx="620" cy="420" r="4" fill="#f97316" opacity="0.5"/>
+    <circle cx="480" cy="800" r="5" fill="#ea580c" opacity="0.5"/>
+  </g>
+  
+  <!-- Yellowing around rust spots -->
+  <g opacity="0.25">
+    <ellipse cx="380" cy="400" rx="40" ry="32" fill="#facc15"/>
+    <ellipse cx="720" cy="350" rx="35" ry="28" fill="#facc15"/>
+    <ellipse cx="550" cy="550" rx="38" ry="30" fill="#facc15"/>
+    <ellipse cx="800" cy="600" rx="30" ry="24" fill="#facc15"/>
+    <ellipse cx="420" cy="700" rx="35" ry="28" fill="#facc15"/>
+  </g>
+  
+  <!-- Veins -->
+  <path d="M600 180 L600 1070" stroke="#15803d" stroke-width="3.5" fill="none" opacity="0.6"/>
+  <g stroke="#16a34a" stroke-width="1.8" fill="none" opacity="0.45">
+    <path d="M600 300 Q480 350, 320 420"/>
+    <path d="M600 300 Q720 350, 880 420"/>
+    <path d="M600 420 Q460 480, 280 560"/>
+    <path d="M600 420 Q740 480, 920 560"/>
+    <path d="M600 540 Q450 600, 260 680"/>
+    <path d="M600 540 Q750 600, 940 680"/>
+    <path d="M600 660 Q470 720, 300 800"/>
+    <path d="M600 660 Q730 720, 900 800"/>
+    <path d="M600 780 Q500 840, 370 910"/>
+    <path d="M600 780 Q700 840, 830 910"/>
+  </g>
+  
+  <!-- Stem -->
+  <path d="M600 1070 Q595 1120, 590 1170 Q588 1190, 585 1200" 
+        stroke="#15803d" stroke-width="6" fill="none" stroke-linecap="round"/>
+</svg>

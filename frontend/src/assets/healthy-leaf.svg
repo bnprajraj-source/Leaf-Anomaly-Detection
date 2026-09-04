@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" width="1200" height="1200">
+  <defs>
+    <radialGradient id="leafGrad1" cx="40%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#4ade80"/>
+      <stop offset="40%" stop-color="#22c55e"/>
+      <stop offset="75%" stop-color="#16a34a"/>
+      <stop offset="100%" stop-color="#15803d"/>
+    </radialGradient>
+    <radialGradient id="highlight1" cx="30%" cy="25%" r="40%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.25)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+    </radialGradient>
+    <filter id="shadow1">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+    <filter id="texture1">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" result="noise"/>
+      <feDiffuseLighting in="noise" lighting-color="#22c55e" surfaceScale="2" result="lit">
+        <feDistantLight azimuth="45" elevation="55"/>
+      </feDiffuseLighting>
+      <feComposite in="SourceGraphic" in2="lit" operator="arithmetic" k1="0.8" k2="0.3" k3="0.1" k4="0"/>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="1200" fill="#0f1a0f"/>
+  
+  <!-- Leaf body -->
+  <g filter="url(#shadow1)">
+    <path d="M600 150 
+             C450 200, 280 350, 230 550
+             C180 750, 280 950, 450 1050
+             C520 1090, 580 1100, 600 1100
+             C620 1100, 680 1090, 750 1050
+             C920 950, 1020 750, 970 550
+             C920 350, 750 200, 600 150Z" 
+          fill="url(#leafGrad1)" filter="url(#texture1)"/>
+  </g>
+  
+  <!-- Leaf highlight -->
+  <path d="M600 150 
+           C450 200, 280 350, 230 550
+           C180 750, 280 950, 450 1050
+           C520 1090, 580 1100, 600 1100
+           C620 1100, 680 1090, 750 1050
+           C920 950, 1020 750, 970 550
+           C920 350, 750 200, 600 150Z" 
+        fill="url(#highlight1)"/>
+  
+  <!-- Main vein -->
+  <path d="M600 180 L600 1070" 
+        stroke="#15803d" stroke-width="4" fill="none" opacity="0.8"/>
+  
+  <!-- Secondary veins -->
+  <g stroke="#16a34a" stroke-width="2" fill="none" opacity="0.6">
+    <path d="M600 300 Q480 350, 320 420"/>
+    <path d="M600 300 Q720 350, 880 420"/>
+    <path d="M600 420 Q460 480, 280 560"/>
+    <path d="M600 420 Q740 480, 920 560"/>
+    <path d="M600 540 Q450 600, 260 680"/>
+    <path d="M600 540 Q750 600, 940 680"/>
+    <path d="M600 660 Q470 720, 300 800"/>
+    <path d="M600 660 Q730 720, 900 800"/>
+    <path d="M600 780 Q500 840, 370 910"/>
+    <path d="M600 780 Q700 840, 830 910"/>
+    <path d="M600 900 Q530 950, 430 1000"/>
+    <path d="M600 900 Q670 950, 770 1000"/>
+  </g>
+  
+  <!-- Tertiary veins -->
+  <g stroke="#22c55e" stroke-width="1" fill="none" opacity="0.35">
+    <path d="M460 340 Q440 380, 380 400"/>
+    <path d="M740 340 Q760 380, 820 400"/>
+    <path d="M440 480 Q410 520, 340 540"/>
+    <path d="M760 480 Q790 520, 860 540"/>
+    <path d="M430 620 Q390 660, 310 680"/>
+    <path d="M770 620 Q810 660, 890 680"/>
+    <path d="M470 760 Q440 800, 370 820"/>
+    <path d="M730 760 Q760 800, 830 820"/>
+    <path d="M530 900 Q500 940, 440 960"/>
+    <path d="M670 900 Q700 940, 760 960"/>
+  </g>
+  
+  <!-- Water droplets -->
+  <g opacity="0.7">
+    <ellipse cx="420" cy="380" rx="12" ry="10" fill="rgba(200,240,200,0.4)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+    <ellipse cx="418" cy="378" rx="4" ry="3" fill="rgba(255,255,255,0.5)"/>
+    
+    <ellipse cx="750" cy="520" rx="8" ry="7" fill="rgba(200,240,200,0.3)" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+    <ellipse cx="749" cy="519" rx="3" ry="2" fill="rgba(255,255,255,0.4)"/>
+    
+    <ellipse cx="520" cy="700" rx="10" ry="9" fill="rgba(200,240,200,0.35)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+    <ellipse cx="518" cy="698" rx="3" ry="2.5" fill="rgba(255,255,255,0.45)"/>
+  </g>
+  
+  <!-- Stem -->
+  <path d="M600 1070 Q595 1120, 590 1170 Q588 1190, 585 1200" 
+        stroke="#15803d" stroke-width="6" fill="none" stroke-linecap="round"/>
+</svg>

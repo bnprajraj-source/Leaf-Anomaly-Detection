@@ -1,0 +1,64 @@
+version: "3.9"
+
+services:
+  mongodb:
+    image: mongo:7
+    container_name: leaf-mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=leaf_anomaly_detection
+    volumes:
+      - mongo_data:/data/db
+    restart: unless-stopped
+
+  db-service:
+    build:
+      context: ./db-service
+      dockerfile: Dockerfile
+    container_name: leaf-db-service
+    ports:
+      - "4000:4000"
+    environment:
+      - PORT=4000
+      - MONGODB_URL=mongodb://mongodb:27017
+      - MONGODB_DB_NAME=leaf_anomaly_detection
+    depends_on:
+      - mongodb
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: leaf-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/saved_models:/app/saved_models
+      - ./backend/dataset:/app/dataset
+    environment:
+      - PYTHONUNBUFFERED=1
+      - MONGODB_URL=mongodb://mongodb:27017
+      - MONGODB_DB_NAME=leaf_anomaly_detection
+    depends_on:
+      - mongodb
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ""
+        VITE_DB_SERVICE_URL: ""
+    container_name: leaf-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+      - db-service
+    restart: unless-stopped
+
+volumes:
+  mongo_data:

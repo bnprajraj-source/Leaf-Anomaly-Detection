@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+venv/
+env/
+.env
+.env.local
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+*.log
+
+# Node
+node_modules/
+dist/
+.env
+.env.local
+.env.production
+db-service/node_modules/
+
+# Model weights (large files — use Git LFS or cloud storage)
+*.pth
+*.pt
+*.onnx
+*.pkl
+
+# MongoDB data (persistent database files)
+data/db/
+data/db/**
+
+# Dataset images
+backend/dataset/train/*
+backend/dataset/test/*
+backend/dataset/validation/*
+!backend/dataset/train/.gitkeep
+!backend/dataset/test/.gitkeep
+!backend/dataset/validation/.gitkeep
+
+# OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/settings.json
+
+# Jupyter
+.ipynb_checkpoints/

@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" width="1200" height="1200">
+  <defs>
+    <radialGradient id="leafGrad5" cx="40%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#4ade80"/>
+      <stop offset="40%" stop-color="#22c55e"/>
+      <stop offset="75%" stop-color="#16a34a"/>
+      <stop offset="100%" stop-color="#15803d"/>
+    </radialGradient>
+    <linearGradient id="blight1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1c1917"/>
+      <stop offset="30%" stop-color="#292524"/>
+      <stop offset="60%" stop-color="#44403c"/>
+      <stop offset="100%" stop-color="#16a34a"/>
+    </linearGradient>
+    <linearGradient id="blight2" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0c0a09"/>
+      <stop offset="40%" stop-color="#1c1917"/>
+      <stop offset="70%" stop-color="#44403c"/>
+      <stop offset="100%" stop-color="#16a34a"/>
+    </linearGradient>
+    <filter id="shadow5">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+    <filter id="blightTexture">
+      <feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="5"/>
+      <feDisplacementMap in="SourceGraphic" scale="5"/>
+    </filter>
+  </defs>
+  
+  <rect width="1200" height="1200" fill="#0f1a0f"/>
+  
+  <g filter="url(#shadow5)">
+    <path d="M600 150 
+             C450 200, 280 350, 230 550
+             C180 750, 280 950, 450 1050
+             C520 1090, 580 1100, 600 1100
+             C620 1100, 680 1090, 750 1050
+             C920 950, 1020 750, 970 550
+             C920 350, 750 200, 600 150Z" 
+          fill="url(#leafGrad5)"/>
+  </g>
+  
+  <!-- Blight areas - dark necrotic tissue -->
+  <g filter="url(#blightTexture)">
+    <!-- Large blight patch - bottom left -->
+    <path d="M280 700 Q320 650, 400 680 Q480 710, 500 800 
+             Q520 890, 450 950 Q380 1010, 300 980 
+             Q220 950, 200 850 Q180 780, 280 700Z" 
+          fill="url(#blight1)" opacity="0.9"/>
+    
+    <!-- Medium blight - upper right -->
+    <path d="M750 280 Q800 260, 860 300 Q920 340, 940 420
+             Q960 500, 900 540 Q840 580, 780 540
+             Q720 500, 710 420 Q700 340, 750 280Z"
+          fill="url(#blight2)" opacity="0.85"/>
+    
+    <!-- Scattered blight spots -->
+    <ellipse cx="500" cy="500" rx="35" ry="28" fill="#1c1917" opacity="0.7"/>
+    <ellipse cx="500" cy="500" rx="20" ry="15" fill="#0c0a09" opacity="0.5"/>
+    
+    <ellipse cx="700" cy="700" rx="28" ry="22" fill="#292524" opacity="0.65"/>
+    
+    <ellipse cx="380" cy="550" rx="22" ry="18" fill="#1c1917" opacity="0.6"/>
+    
+    <ellipse cx="650" cy="400" rx="18" ry="14" fill="#292524" opacity="0.55"/>
+  </g>
+  
+  <!-- Brown/yellow transition zones -->
+  <g opacity="0.4">
+    <path d="M280 700 Q320 660, 400 690 Q350 720, 280 700Z" fill="#92400e"/>
+    <path d="M450 950 Q420 920, 380 940 Q420 970, 450 950Z" fill="#a16207"/>
+    <path d="M750 280 Q780 270, 820 290 Q780 310, 750 280Z" fill="#78350f"/>
+    <path d="M940 420 Q920 450, 930 480 Q950 450, 940 420Z" fill="#92400e"/>
+  </g>
+  
+  <!-- Wilting curling edges -->
+  <g opacity="0.3">
+    <path d="M230 550 Q220 540, 215 530 Q210 520, 220 515 Q225 530, 230 550Z" fill="#1c1917"/>
+    <path d="M970 550 Q980 540, 985 530 Q990 520, 980 515 Q975 530, 970 550Z" fill="#1c1917"/>
+  </g>
+  
+  <!-- Veins (partially destroyed) -->
+  <path d="M600 180 L600 1070" stroke="#15803d" stroke-width="3" fill="none" opacity="0.4"/>
+  <g stroke="#16a34a" stroke-width="1.5" fill="none" opacity="0.3">
+    <path d="M600 300 Q480 350, 320 420"/>
+    <path d="M600 300 Q720 350, 880 420"/>
+    <path d="M600 420 Q460 480, 280 560"/>
+    <path d="M600 420 Q740 480, 920 560"/>
+    <path d="M600 540 Q450 600, 260 680"/>
+    <path d="M600 540 Q750 600, 940 680"/>
+  </g>
+  
+  <!-- Stem -->
+  <path d="M600 1070 Q595 1120, 590 1170 Q588 1190, 585 1200" 
+        stroke="#15803d" stroke-width="6" fill="none" stroke-linecap="round"/>
+</svg>

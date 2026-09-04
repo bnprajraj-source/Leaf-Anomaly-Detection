@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" width="1200" height="1200">
+  <defs>
+    <radialGradient id="leafGrad3" cx="40%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#4ade80"/>
+      <stop offset="40%" stop-color="#22c55e"/>
+      <stop offset="75%" stop-color="#16a34a"/>
+      <stop offset="100%" stop-color="#15803d"/>
+    </radialGradient>
+    <radialGradient id="mildew1" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.9)"/>
+      <stop offset="40%" stop-color="rgba(240,240,240,0.7)"/>
+      <stop offset="70%" stop-color="rgba(220,220,220,0.4)"/>
+      <stop offset="100%" stop-color="rgba(200,200,200,0)"/>
+    </radialGradient>
+    <filter id="shadow3">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+    <filter id="mildewTexture">
+      <feTurbulence type="fractalNoise" baseFrequency="0.15" numOctaves="5" result="noise"/>
+      <feDiffuseLighting in="noise" lighting-color="white" surfaceScale="1.5">
+        <feDistantLight azimuth="45" elevation="60"/>
+      </feDiffuseLighting>
+      <feComposite in="SourceGraphic" operator="arithmetic" k1="0.5" k2="0.5" k3="0.2" k4="0"/>
+    </filter>
+  </defs>
+  
+  <rect width="1200" height="1200" fill="#0f1a0f"/>
+  
+  <g filter="url(#shadow3)">
+    <path d="M600 150 
+             C450 200, 280 350, 230 550
+             C180 750, 280 950, 450 1050
+             C520 1090, 580 1100, 600 1100
+             C620 1100, 680 1090, 750 1050
+             C920 950, 1020 750, 970 550
+             C920 350, 750 200, 600 150Z" 
+          fill="url(#leafGrad3)"/>
+  </g>
+  
+  <!-- Powdery mildew coating - large patches -->
+  <g filter="url(#mildewTexture)" opacity="0.85">
+    <ellipse cx="450" cy="380" rx="120" ry="90" fill="url(#mildew1)"/>
+    <ellipse cx="700" cy="500" rx="100" ry="80" fill="url(#mildew1)"/>
+    <ellipse cx="500" cy="700" rx="130" ry="95" fill="url(#mildew1)"/>
+    <ellipse cx="750" cy="350" rx="80" ry="65" fill="url(#mildew1)"/>
+    <ellipse cx="380" cy="600" rx="90" ry="70" fill="url(#mildew1)"/>
+  </g>
+  
+  <!-- White powder dusting -->
+  <g opacity="0.6">
+    <circle cx="420" cy="350" r="3" fill="white"/>
+    <circle cx="440" cy="370" r="2" fill="white"/>
+    <circle cx="460" cy="340" r="2.5" fill="white"/>
+    <circle cx="480" cy="390" r="2" fill="white"/>
+    <circle cx="430" cy="400" r="1.5" fill="white"/>
+    <circle cx="690" cy="480" r="2.5" fill="white"/>
+    <circle cx="710" cy="500" r="2" fill="white"/>
+    <circle cx="730" cy="520" r="3" fill="white"/>
+    <circle cx="680" cy="530" r="1.5" fill="white"/>
+    <circle cx="510" cy="680" r="2" fill="white"/>
+    <circle cx="530" cy="710" r="2.5" fill="white"/>
+    <circle cx="490" cy="720" r="2" fill="white"/>
+    <circle cx="470" cy="690" r="3" fill="white"/>
+    <circle cx="550" cy="700" r="1.5" fill="white"/>
+    <circle cx="740" cy="340" r="2" fill="white"/>
+    <circle cx="760" cy="360" r="2.5" fill="white"/>
+    <circle cx="720" cy="370" r="1.5" fill="white"/>
+    <circle cx="370" cy="590" r="2" fill="white"/>
+    <circle cx="390" cy="610" r="2.5" fill="white"/>
+    <circle cx="400" cy="580" r="2" fill="white"/>
+  </g>
+  
+  <!-- Veins (partially obscured) -->
+  <path d="M600 180 L600 1070" stroke="#15803d" stroke-width="3" fill="none" opacity="0.5"/>
+  <g stroke="#16a34a" stroke-width="1.5" fill="none" opacity="0.35">
+    <path d="M600 300 Q480 350, 320 420"/>
+    <path d="M600 300 Q720 350, 880 420"/>
+    <path d="M600 420 Q460 480, 280 560"/>
+    <path d="M600 420 Q740 480, 920 560"/>
+    <path d="M600 540 Q450 600, 260 680"/>
+    <path d="M600 540 Q750 600, 940 680"/>
+    <path d="M600 660 Q470 720, 300 800"/>
+    <path d="M600 660 Q730 720, 900 800"/>
+  </g>
+  
+  <!-- Stem -->
+  <path d="M600 1070 Q595 1120, 590 1170 Q588 1190, 585 1200" 
+        stroke="#15803d" stroke-width="6" fill="none" stroke-linecap="round"/>
+</svg>
