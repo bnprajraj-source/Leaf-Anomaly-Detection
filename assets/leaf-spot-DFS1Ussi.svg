@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" width="1200" height="1200">
+  <defs>
+    <radialGradient id="leafGrad2" cx="40%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#4ade80"/>
+      <stop offset="40%" stop-color="#22c55e"/>
+      <stop offset="75%" stop-color="#16a34a"/>
+      <stop offset="100%" stop-color="#15803d"/>
+    </radialGradient>
+    <radialGradient id="spot1" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#78350f"/>
+      <stop offset="50%" stop-color="#92400e"/>
+      <stop offset="80%" stop-color="#a16207"/>
+      <stop offset="100%" stop-color="#16a34a"/>
+    </radialGradient>
+    <radialGradient id="spot2" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#451a03"/>
+      <stop offset="60%" stop-color="#78350f"/>
+      <stop offset="100%" stop-color="#16a34a"/>
+    </radialGradient>
+    <filter id="shadow2">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+    <filter id="spotTexture">
+      <feTurbulence type="fractalNoise" baseFrequency="0.08" numOctaves="3"/>
+      <feDisplacementMap in="SourceGraphic" scale="3"/>
+    </filter>
+  </defs>
+  
+  <rect width="1200" height="1200" fill="#0f1a0f"/>
+  
+  <g filter="url(#shadow2)">
+    <!-- Leaf body -->
+    <path d="M600 150 
+             C450 200, 280 350, 230 550
+             C180 750, 280 950, 450 1050
+             C520 1090, 580 1100, 600 1100
+             C620 1100, 680 1090, 750 1050
+             C920 950, 1020 750, 970 550
+             C920 350, 750 200, 600 150Z" 
+          fill="url(#leafGrad2)"/>
+  </g>
+  
+  <!-- Disease spots -->
+  <g filter="url(#spotTexture)">
+    <!-- Large spot upper left -->
+    <ellipse cx="400" cy="350" rx="55" ry="45" fill="url(#spot1)" opacity="0.9"/>
+    <ellipse cx="400" cy="350" rx="35" ry="28" fill="#451a03" opacity="0.6"/>
+    <circle cx="390" cy="340" r="8" fill="#1c1917" opacity="0.4"/>
+    
+    <!-- Medium spot right -->
+    <ellipse cx="780" cy="480" rx="40" ry="35" fill="url(#spot2)" opacity="0.85"/>
+    <ellipse cx="780" cy="480" rx="22" ry="18" fill="#451a03" opacity="0.5"/>
+    
+    <!-- Small spots scattered -->
+    <circle cx="350" cy="600" r="18" fill="url(#spot1)" opacity="0.8"/>
+    <circle cx="350" cy="600" r="10" fill="#451a03" opacity="0.5"/>
+    
+    <circle cx="700" cy="320" r="15" fill="url(#spot2)" opacity="0.75"/>
+    <circle cx="700" cy="320" r="8" fill="#1c1917" opacity="0.4"/>
+    
+    <ellipse cx="520" cy="750" rx="30" ry="25" fill="url(#spot1)" opacity="0.8"/>
+    <ellipse cx="520" cy="750" rx="16" ry="12" fill="#451a03" opacity="0.5"/>
+    
+    <circle cx="680" cy="680" r="20" fill="url(#spot2)" opacity="0.7"/>
+    <circle cx="680" cy="680" r="11" fill="#451a03" opacity="0.45"/>
+    
+    <circle cx="450" cy="880" r="14" fill="url(#spot1)" opacity="0.65"/>
+    
+    <ellipse cx="820" cy="720" rx="22" ry="18" fill="url(#spot2)" opacity="0.7"/>
+    <ellipse cx="820" cy="720" rx="12" ry="9" fill="#1c1917" opacity="0.4"/>
+    
+    <!-- Tiny spots -->
+    <circle cx="550" cy="420" r="6" fill="#78350f" opacity="0.6"/>
+    <circle cx="620" cy="550" r="5" fill="#92400e" opacity="0.5"/>
+    <circle cx="480" cy="650" r="7" fill="#78350f" opacity="0.55"/>
+    <circle cx="730" cy="850" r="5" fill="#92400e" opacity="0.5"/>
+  </g>
+  
+  <!-- Yellow halo around spots (chlorosis) -->
+  <g opacity="0.3">
+    <ellipse cx="400" cy="350" rx="70" ry="60" fill="#facc15" filter="url(#spotTexture)"/>
+    <ellipse cx="780" cy="480" rx="55" ry="48" fill="#facc15"/>
+    <ellipse cx="520" cy="750" rx="42" ry="36" fill="#facc15"/>
+  </g>
+  
+  <!-- Veins -->
+  <path d="M600 180 L600 1070" stroke="#15803d" stroke-width="4" fill="none" opacity="0.7"/>
+  <g stroke="#16a34a" stroke-width="2" fill="none" opacity="0.5">
+    <path d="M600 300 Q480 350, 320 420"/>
+    <path d="M600 300 Q720 350, 880 420"/>
+    <path d="M600 420 Q460 480, 280 560"/>
+    <path d="M600 420 Q740 480, 920 560"/>
+    <path d="M600 540 Q450 600, 260 680"/>
+    <path d="M600 540 Q750 600, 940 680"/>
+    <path d="M600 660 Q470 720, 300 800"/>
+    <path d="M600 660 Q730 720, 900 800"/>
+    <path d="M600 780 Q500 840, 370 910"/>
+    <path d="M600 780 Q700 840, 830 910"/>
+  </g>
+  
+  <!-- Stem -->
+  <path d="M600 1070 Q595 1120, 590 1170 Q588 1190, 585 1200" 
+        stroke="#15803d" stroke-width="6" fill="none" stroke-linecap="round"/>
+</svg>
