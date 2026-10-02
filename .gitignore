@@ -27,6 +27,8 @@ db-service/node_modules/
 *.pt
 *.onnx
 *.pkl
+# Production model used by Render — must be in the repo
+!backend/saved_models/leaf_detection_model.pth
 
 # MongoDB data (persistent database files)
 data/db/

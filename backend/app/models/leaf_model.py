@@ -106,10 +106,12 @@ def load_model(device: str = DEVICE) -> LeafAnomalyModel:
     if _model_instance is not None:
         return _model_instance
 
-    model = LeafAnomalyModel(num_classes=NUM_CLASSES, pretrained=True)
-
     checkpoint_path = Path(MODEL_PATH)
-    if checkpoint_path.exists():
+    has_checkpoint = checkpoint_path.exists()
+    # Skip ImageNet weight download when a fine-tuned checkpoint will be loaded
+    model = LeafAnomalyModel(num_classes=NUM_CLASSES, pretrained=not has_checkpoint)
+
+    if has_checkpoint:
         logger.info(f"Loading weights from {checkpoint_path}")
         try:
             state_dict = torch.load(checkpoint_path, map_location=device, weights_only=False)

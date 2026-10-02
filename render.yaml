@@ -1,0 +1,71 @@
+# Render Blueprint — Leaf Anomaly Detection
+# Backend (FastAPI) + Frontend (React/Vite static site)
+# Database: MongoDB Atlas (external — set MONGODB_URL when prompted)
+#
+# Deploy: Render Dashboard → New → Blueprint → connect this repo → Apply
+
+projects:
+  - name: leaf-anomaly-detection
+    environments:
+      - name: production
+        services:
+          # ------------------------------------------------------------------
+          # Backend — Python FastAPI + PyTorch
+          # ------------------------------------------------------------------
+          - type: web
+            name: leaf-anomaly-backend
+            runtime: python
+            plan: free
+            region: oregon
+            rootDir: backend
+            # CPU-only torch first (smaller install, fits free-tier disk/RAM),
+            # then the rest of the app deps from the lean production file.
+            buildCommand: >
+              pip install torch torchvision
+              --index-url https://download.pytorch.org/whl/cpu &&
+              pip install -r requirements-render.txt
+            startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+            healthCheckPath: /health
+            envVars:
+              - key: PYTHON_VERSION
+                value: "3.11.9"
+              - key: PYTHONUNBUFFERED
+                value: "1"
+              - key: APP_ENV
+                value: production
+              - key: MONGODB_URL
+                sync: false
+              - key: MONGODB_DB_NAME
+                value: leaf_anomaly_detection
+              - key: SECRET_KEY
+                generateValue: true
+              - key: ACCESS_TOKEN_EXPIRE_MINUTES
+                value: "1440"
+              # Public frontend URL → used in CORS allow-list
+              - key: FRONTEND_URL
+                fromService:
+                  name: leaf-anomaly-frontend
+                  type: web
+                  envVarKey: RENDER_EXTERNAL_URL
+
+          # ------------------------------------------------------------------
+          # Frontend — React + Vite (static site on Render CDN)
+          # ------------------------------------------------------------------
+          - type: web
+            name: leaf-anomaly-frontend
+            runtime: static
+            rootDir: frontend
+            buildCommand: npm ci && npm run build
+            staticPublishPath: dist
+            routes:
+              # SPA fallback for React Router
+              - type: rewrite
+                source: /*
+                destination: /index.html
+            envVars:
+              # Baked into the bundle at build time
+              - key: VITE_API_URL
+                fromService:
+                  name: leaf-anomaly-backend
+                  type: web
+                  envVarKey: RENDER_EXTERNAL_URL

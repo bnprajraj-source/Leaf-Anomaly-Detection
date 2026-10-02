@@ -39,12 +39,13 @@ def _parse_origin_list(raw_value: str | None) -> list[str]:
 
 
 APP_ENV = os.getenv("APP_ENV", "development").lower()
+PORT = int(os.getenv("PORT", "8000"))
 FRONTEND_URL = _normalize_base_url(
     os.getenv("FRONTEND_URL") or os.getenv("APP_PUBLIC_URL"),
     "http://localhost:3000",
 )
 BACKEND_URL = _normalize_base_url(
-    os.getenv("BACKEND_URL") or os.getenv("APP_URL"),
+    os.getenv("BACKEND_URL") or os.getenv("APP_URL") or f"http://localhost:{PORT}",
     "http://localhost:8000",
 )
 
