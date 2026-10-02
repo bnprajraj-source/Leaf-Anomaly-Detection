@@ -7,8 +7,9 @@ Provides load_model() and predict() for the inference pipeline.
 
 import logging
 from pathlib import Path
-from typing import Dict, Any
+from typing import Dict, Any, List
 
+import numpy as np
 import torch
 import torch.nn as nn
 import torchvision.models as tv_models
@@ -178,5 +179,139 @@ def predict(
             CLASS_LABELS[i]: round(probs[i].item() * 100, 2)
             for i in range(len(CLASS_LABELS))
         },
+        "attention_map_available": True,
+    }
+
+
+# ---------------------------------------------------------------------------
+# Advanced Prediction Utilities
+# ---------------------------------------------------------------------------
+
+def predict_with_confidence_threshold(
+    image_tensor: torch.Tensor,
+    model:        LeafAnomalyModel,
+    device:       str = DEVICE,
+    threshold:    float = 50.0,
+) -> Dict[str, Any]:
+    """
+    Run inference with a confidence threshold.
+    If top prediction confidence is below threshold, returns "Uncertain".
+
+    Args:
+        image_tensor: Tensor of shape [1, 3, 224, 224].
+        model:        Loaded LeafAnomalyModel instance.
+        device:       'cpu' or 'cuda'.
+        threshold:    Minimum confidence % to accept prediction.
+
+    Returns:
+        dict with prediction, confidence, anomaly_type, all_scores,
+        and an 'is_confident' flag.
+    """
+    result = predict(image_tensor, model, device)
+    result["is_confident"] = result["confidence"] >= threshold
+
+    if not result["is_confident"]:
+        result["original_prediction"] = result["prediction"]
+        result["original_anomaly_type"] = result["anomaly_type"]
+        result["prediction"] = "Uncertain"
+        result["anomaly_type"] = "Low Confidence"
+
+    return result
+
+
+def predict_top_n(
+    image_tensor: torch.Tensor,
+    model:        LeafAnomalyModel,
+    device:       str = DEVICE,
+    top_n:        int = 3,
+) -> Dict[str, Any]:
+    """
+    Run inference and return the top-N predictions with probabilities.
+
+    Args:
+        image_tensor: Tensor of shape [1, 3, 224, 224].
+        model:        Loaded LeafAnomalyModel instance.
+        device:       'cpu' or 'cuda'.
+        top_n:        Number of top predictions to return.
+
+    Returns:
+        dict with top_predictions list, primary prediction, and all_scores.
+    """
+    image_tensor = image_tensor.to(device)
+
+    with torch.no_grad():
+        logits = model(image_tensor)
+        probs  = torch.softmax(logits, dim=1)[0]
+
+    # Get top-N indices
+    top_n = min(top_n, len(CLASS_LABELS))
+    top_indices = probs.argsort(descending=True)[:top_n]
+
+    top_predictions = []
+    for idx in top_indices:
+        top_predictions.append({
+            "class": CLASS_LABELS[idx],
+            "confidence": round(probs[idx].item() * 100, 2),
+            "is_healthy": CLASS_LABELS[idx] == "Healthy",
+        })
+
+    primary = top_predictions[0]
+
+    return {
+        "prediction": "Healthy" if primary["is_healthy"] else "Diseased",
+        "confidence": primary["confidence"],
+        "anomaly_type": primary["class"],
+        "top_predictions": top_predictions,
+        "all_scores": {
+            CLASS_LABELS[i]: round(probs[i].item() * 100, 2)
+            for i in range(len(CLASS_LABELS))
+        },
+        "attention_map_available": True,
+    }
+
+
+def predict_ensemble(
+    image_tensors: list,
+    model:         LeafAnomalyModel,
+    device:        str = DEVICE,
+) -> Dict[str, Any]:
+    """
+    Run inference on multiple augmented versions of the same image
+    and average the probabilities for more robust predictions.
+
+    Args:
+        image_tensors: List of tensors, each [1, 3, 224, 224].
+        model:         Loaded LeafAnomalyModel instance.
+        device:        'cpu' or 'cuda'.
+
+    Returns:
+        dict with averaged prediction results.
+    """
+    all_probs = []
+
+    for tensor in image_tensors:
+        tensor = tensor.to(device)
+        with torch.no_grad():
+            logits = model(tensor)
+            probs = torch.softmax(logits, dim=1)[0]
+            all_probs.append(probs.cpu().numpy())
+
+    # Average probabilities across all augmentations
+    avg_probs = np.mean(all_probs, axis=0)
+    avg_probs = torch.from_numpy(avg_probs)
+
+    top_idx = avg_probs.argmax().item()
+    confidence = round(avg_probs[top_idx].item() * 100, 2)
+    label = CLASS_LABELS[top_idx]
+
+    return {
+        "prediction": "Healthy" if label == "Healthy" else "Diseased",
+        "confidence": confidence,
+        "anomaly_type": label,
+        "all_scores": {
+            CLASS_LABELS[i]: round(avg_probs[i].item() * 100, 2)
+            for i in range(len(CLASS_LABELS))
+        },
+        "num_augmentations": len(image_tensors),
         "attention_map_available": True,
     }

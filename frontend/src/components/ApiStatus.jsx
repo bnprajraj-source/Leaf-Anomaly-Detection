@@ -10,10 +10,13 @@ export default function ApiStatus() {
     const check = async () => {
       try {
         const data = await checkHealth()
-        if (mounted) {
-          setMlStatus(data.status === 'healthy' ? 'ok' : 'degraded')
-          setDbStatus(data.db_connected ? 'ok' : 'degraded')
-        }
+        if (!mounted) return
+
+        const modelReady = data?.model_ready ?? data?.status === 'healthy'
+        const dbReady = data?.db_connected ?? false
+
+        setMlStatus(modelReady ? 'ok' : (data?.status === 'degraded' ? 'degraded' : 'offline'))
+        setDbStatus(dbReady ? 'ok' : (data?.status === 'degraded' ? 'degraded' : 'offline'))
       } catch {
         if (mounted) {
           setMlStatus('offline')

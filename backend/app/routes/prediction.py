@@ -1,18 +1,20 @@
 """
 Prediction Routes
 =================
-POST /predict  — Upload a leaf image and receive an anomaly prediction.
-GET  /health   — Health check endpoint.
+POST /predict        — Upload a leaf image and receive an anomaly prediction.
+POST /predict/batch  — Upload multiple leaf images for batch prediction.
+GET  /health         — Health check endpoint.
 """
 
 import logging
 import time
 from datetime import datetime, timezone
+from typing import List
 
 from fastapi import APIRouter, File, HTTPException, Request, UploadFile
 from fastapi.responses import JSONResponse
 
-from app.config import DEVICE
+from app.config import APP_ENV, DEVICE
 from app.database import get_database, is_db_connected, PREDICTIONS_COLLECTION
 from app.models.leaf_model import load_model, predict
 from app.utils.image_processing import (
@@ -24,6 +26,7 @@ from app.utils.preprocessing import preprocess_image
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
+APP_START_TIME = time.monotonic()
 
 
 # ---------------------------------------------------------------------------
@@ -135,6 +138,58 @@ async def predict_leaf_anomaly(request: Request, file: UploadFile = File(...)):
 
 
 # ---------------------------------------------------------------------------
+# POST /predict/batch — Batch prediction for multiple images
+# ---------------------------------------------------------------------------
+
+@router.post("/predict/batch")
+async def predict_batch(request: Request, files: List[UploadFile] = File(...)):
+    """
+    Upload multiple leaf images and receive predictions for each.
+    Maximum 10 images per batch request.
+    """
+    if len(files) > 10:
+        raise HTTPException(status_code=400, detail="Maximum 10 images per batch")
+
+    start = time.perf_counter()
+    model = load_model(DEVICE)
+    results = []
+
+    for idx, file in enumerate(files):
+        try:
+            image_bytes = await file.read()
+            if not image_bytes:
+                results.append({"index": idx, "filename": file.filename, "error": "Empty file"})
+                continue
+
+            validate_image(image_bytes, file.content_type or "image/jpeg")
+            img = load_image_from_bytes(image_bytes)
+            meta = get_image_metadata(img)
+            tensor = preprocess_image(img)
+            result = predict(tensor, model, DEVICE)
+
+            results.append({
+                "index": idx,
+                "filename": file.filename,
+                "image_meta": meta,
+                **result,
+            })
+        except ValueError as e:
+            results.append({"index": idx, "filename": file.filename, "error": str(e)})
+        except Exception as e:
+            results.append({"index": idx, "filename": file.filename, "error": f"Processing failed: {e}"})
+
+    elapsed_ms = round((time.perf_counter() - start) * 1000, 1)
+
+    return JSONResponse(content={
+        "total": len(files),
+        "processed": len([r for r in results if "error" not in r]),
+        "failed": len([r for r in results if "error" in r]),
+        "processing_time_ms": elapsed_ms,
+        "results": results,
+    })
+
+
+# ---------------------------------------------------------------------------
 # GET /health
 # ---------------------------------------------------------------------------
 
@@ -150,11 +205,14 @@ async def health_check():
 
     # Check MongoDB
     db_connected = is_db_connected()
+    status = "healthy" if model_ready and db_connected else "degraded" if model_ready or db_connected else "offline"
 
     return {
-        "status":       "healthy" if model_ready else "degraded",
-        "model_ready":  model_ready,
+        "status": status,
+        "model_ready": model_ready,
         "db_connected": db_connected,
-        "device":       DEVICE,
-        "version":      "1.0.0",
+        "device": DEVICE,
+        "version": "1.0.0",
+        "environment": APP_ENV,
+        "uptime_seconds": round(time.monotonic() - APP_START_TIME, 2),
     }

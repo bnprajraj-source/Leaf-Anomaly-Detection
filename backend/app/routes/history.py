@@ -1,13 +1,16 @@
 """
 History Routes
 ==============
-GET    /history           — List prediction history (paginated)
-GET    /history/{id}      — Get a single prediction record
-DELETE /history/{id}      — Delete a prediction record
-DELETE /history           — Clear all prediction history
-GET    /stats             — Get aggregated statistics
+GET    /history              — List prediction history (paginated)
+GET    /history/{id}         — Get a single prediction record
+DELETE /history/{id}         — Delete a prediction record
+DELETE /history              — Clear all prediction history
+GET    /history/export/csv   — Export history as CSV
+GET    /stats                — Get aggregated statistics
 """
 
+import csv
+import io
 import logging
 import math
 from datetime import datetime
@@ -16,6 +19,7 @@ from typing import Optional
 from bson import ObjectId
 from bson.errors import InvalidId
 from fastapi import APIRouter, HTTPException, Query
+from fastapi.responses import StreamingResponse
 
 from app.database import (
     get_database,
@@ -177,6 +181,62 @@ async def clear_prediction_history():
         "message": "All prediction history cleared",
         "deleted_count": result.deleted_count,
     }
+
+
+# ---------------------------------------------------------------------------
+# GET /history/export/csv — Export prediction history as CSV
+# ---------------------------------------------------------------------------
+@router.get("/history/export/csv")
+async def export_history_csv(
+    prediction: Optional[str] = Query(None, description="Filter by prediction type"),
+    anomaly_type: Optional[str] = Query(None, description="Filter by anomaly type"),
+):
+    """
+    Export prediction history as a downloadable CSV file.
+    Optional filters: prediction (Healthy/Diseased), anomaly_type.
+    """
+    require_db()
+    db = get_database()
+    collection = db[PREDICTIONS_COLLECTION]
+
+    query_filter = {}
+    if prediction:
+        query_filter["prediction"] = prediction
+    if anomaly_type:
+        query_filter["anomaly_type"] = anomaly_type
+
+    try:
+        cursor = collection.find(query_filter).sort("created_at", -1)
+    except Exception as e:
+        logger.error(f"Failed to fetch history for export: {e}")
+        raise HTTPException(status_code=500, detail="Failed to export history")
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(["id", "prediction", "confidence", "anomaly_type", "filename", "created_at"])
+
+    async for doc in cursor:
+        doc_id = str(doc.get("_id", ""))
+        created = doc.get("created_at")
+        created_str = created.isoformat() if isinstance(created, datetime) else str(created)
+        writer.writerow([
+            doc_id,
+            doc.get("prediction", ""),
+            doc.get("confidence", 0),
+            doc.get("anomaly_type", ""),
+            doc.get("filename", ""),
+            created_str,
+        ])
+
+    output.seek(0)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"leaf_anomaly_history_{timestamp}.csv"
+
+    return StreamingResponse(
+        iter([output.getvalue()]),
+        media_type="text/csv",
+        headers={"Content-Disposition": f"attachment; filename={filename}"},
+    )
 
 
 # ---------------------------------------------------------------------------

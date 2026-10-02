@@ -109,3 +109,15 @@ class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"
     user: UserResponse
+
+
+class ProfileUpdate(BaseModel):
+    """Schema for updating user profile."""
+    full_name: Optional[str] = Field(None, description="New full name")
+    email: Optional[str] = Field(None, description="New email address")
+
+
+class PasswordChange(BaseModel):
+    """Schema for changing user password."""
+    current_password: str = Field(..., description="Current password")
+    new_password: str = Field(..., min_length=6, description="New password (min 6 chars)")

@@ -1,6 +1,6 @@
 """
 Image Processing Utilities
-===========================
+==========================
 Handles image validation, format conversion, and preparation
 for model inference.
 """
@@ -10,7 +10,7 @@ import logging
 from typing import Tuple
 
 import numpy as np
-from PIL import Image, UnidentifiedImageError
+from PIL import Image, ImageEnhance, ImageFilter, UnidentifiedImageError
 
 logger = logging.getLogger(__name__)
 
@@ -93,3 +93,143 @@ def get_image_metadata(img: Image.Image) -> dict:
         "mode":   img.mode,
         "format": img.format,
     }
+
+
+# ---------------------------------------------------------------------------
+# Image Enhancement Utilities
+# ---------------------------------------------------------------------------
+
+def enhance_brightness(img: Image.Image, factor: float = 1.0) -> Image.Image:
+    """
+    Adjust image brightness.
+
+    Args:
+        img:    PIL Image to enhance.
+        factor: 1.0 = no change, <1.0 = darker, >1.0 = brighter.
+
+    Returns:
+        Enhanced PIL Image.
+    """
+    enhancer = ImageEnhance.Brightness(img)
+    return enhancer.enhance(factor)
+
+
+def enhance_contrast(img: Image.Image, factor: float = 1.0) -> Image.Image:
+    """
+    Adjust image contrast.
+
+    Args:
+        img:    PIL Image to enhance.
+        factor: 1.0 = no change, <1.0 = less contrast, >1.0 = more contrast.
+
+    Returns:
+        Enhanced PIL Image.
+    """
+    enhancer = ImageEnhance.Contrast(img)
+    return enhancer.enhance(factor)
+
+
+def enhance_sharpness(img: Image.Image, factor: float = 1.0) -> Image.Image:
+    """
+    Adjust image sharpness.
+
+    Args:
+        img:    PIL Image to enhance.
+        factor: 1.0 = no change, 0.0 = blurry, >1.0 = sharper.
+
+    Returns:
+        Enhanced PIL Image.
+    """
+    enhancer = ImageEnhance.Sharpness(img)
+    return enhancer.enhance(factor)
+
+
+def enhance_color(img: Image.Image, factor: float = 1.0) -> Image.Image:
+    """
+    Adjust image color saturation.
+
+    Args:
+        img:    PIL Image to enhance.
+        factor: 1.0 = no change, 0.0 = grayscale, >1.0 = more saturated.
+
+    Returns:
+        Enhanced PIL Image.
+    """
+    enhancer = ImageEnhance.Color(img)
+    return enhancer.enhance(factor)
+
+
+def apply_gaussian_blur(img: Image.Image, radius: float = 2.0) -> Image.Image:
+    """
+    Apply Gaussian blur to an image.
+
+    Args:
+        img:    PIL Image to blur.
+        radius: Blur radius (higher = more blur).
+
+    Returns:
+        Blurred PIL Image.
+    """
+    return img.filter(ImageFilter.GaussianBlur(radius=radius))
+
+
+def apply_sharpen(img: Image.Image) -> Image.Image:
+    """Apply sharpening filter to an image."""
+    return img.filter(ImageFilter.SHARPEN)
+
+
+def reduce_noise(img: Image.Image) -> Image.Image:
+    """
+    Reduce image noise using a median filter.
+    Effective for salt-and-pepper noise.
+    """
+    return img.filter(ImageFilter.MedianFilter(size=3))
+
+
+def adjust_gamma(img: Image.Image, gamma: float = 1.0) -> Image.Image:
+    """
+    Apply gamma correction to an image.
+
+    Args:
+        img:   PIL Image to adjust.
+        gamma: <1.0 = brighter, >1.0 = darker.
+
+    Returns:
+        Gamma-corrected PIL Image.
+    """
+    array = np.array(img, dtype=np.float32) / 255.0
+    corrected = np.power(array, 1.0 / gamma)
+    corrected = (corrected * 255).clip(0, 255).astype(np.uint8)
+    return Image.fromarray(corrected)
+
+
+def auto_enhance(img: Image.Image) -> Image.Image:
+    """
+    Automatically enhance an image with balanced brightness, contrast, and sharpness.
+    Useful as a preprocessing step to improve prediction accuracy.
+    """
+    img = enhance_brightness(img, factor=1.1)
+    img = enhance_contrast(img, factor=1.2)
+    img = enhance_sharpness(img, factor=1.1)
+    return img
+
+
+def get_image_stats(img: Image.Image) -> dict:
+    """
+    Compute basic image statistics useful for quality assessment.
+
+    Returns:
+        dict with mean, std, min, max for each channel.
+    """
+    array = np.array(img, dtype=np.float32) / 255.0
+    channels = ["R", "G", "B"]
+    stats = {}
+    for i, ch in enumerate(channels):
+        channel_data = array[:, :, i]
+        stats[ch] = {
+            "mean": round(float(channel_data.mean()), 4),
+            "std": round(float(channel_data.std()), 4),
+            "min": round(float(channel_data.min()), 4),
+            "max": round(float(channel_data.max()), 4),
+        }
+    return stats

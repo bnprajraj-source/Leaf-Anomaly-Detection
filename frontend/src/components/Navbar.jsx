@@ -11,8 +11,23 @@ const NAV_LINKS = [
   { to: '/about',     label: 'About' },
 ]
 
+const FARM_LINKS = [
+  { to: '/dashboard',  label: 'Dashboard', icon: '📊' },
+  { to: '/plants',     label: 'My Plants', icon: '🌱' },
+  { to: '/growth',     label: 'Growth Stages', icon: '📈' },
+  { to: '/irrigation', label: 'Irrigation', icon: '💧' },
+  { to: '/fertilizer', label: 'Fertilizer', icon: '🧪' },
+  { to: '/soil',       label: 'Soil Analysis', icon: '🌍' },
+  { to: '/harvest',    label: 'Harvest', icon: '🌾' },
+  { to: '/expenses',   label: 'Expenses', icon: '💰' },
+  { to: '/seasonal',   label: 'Seasonal', icon: '📅' },
+  { to: '/reports',    label: 'Reports', icon: '📋' },
+  { to: '/import',     label: 'Import', icon: '📤' },
+]
+
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [farmOpen, setFarmOpen] = useState(false)
 
   return (
     <nav className="sticky top-0 z-50 glass-nav">
@@ -45,6 +60,35 @@ export default function Navbar() {
               {label}
             </NavLink>
           ))}
+          {/* Farm Management Dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => setFarmOpen(!farmOpen)}
+              className="nav-link text-sm text-gray-300 hover:text-white flex items-center gap-1"
+            >
+              Farm <span className="text-xs">▾</span>
+            </button>
+            {farmOpen && (
+              <div className="absolute right-0 top-full mt-2 w-56 bg-forest-dark/95 backdrop-blur-xl border border-leaf-900/40 rounded-xl shadow-2xl py-2 animate-slideDown">
+                {FARM_LINKS.map(({ to, label, icon }) => (
+                  <NavLink
+                    key={to}
+                    to={to}
+                    onClick={() => setFarmOpen(false)}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 px-4 py-2 text-sm transition-all ${
+                        isActive
+                          ? 'bg-leaf-900/30 text-leaf-400'
+                          : 'text-gray-400 hover:text-white hover:bg-forest-mid/60'
+                      }`
+                    }
+                  >
+                    <span>{icon}</span> {label}
+                  </NavLink>
+                ))}
+              </div>
+            )}
+          </div>
           <ApiStatus />
           <Link to="/detection" className="btn-primary py-2 px-4 text-sm">
             Analyze Leaf
@@ -91,6 +135,25 @@ export default function Navbar() {
                 {label}
               </NavLink>
             ))}
+            <div className="pt-3 border-t border-leaf-900/30">
+              <p className="text-xs text-gray-500 px-4 mb-1 uppercase tracking-wider">Farm Management</p>
+              {FARM_LINKS.map(({ to, label, icon }) => (
+                <NavLink
+                  key={to}
+                  to={to}
+                  onClick={() => setMobileOpen(false)}
+                  className={({ isActive }) =>
+                    `flex items-center gap-2 px-4 py-2 rounded-xl text-sm transition-all ${
+                      isActive
+                        ? 'bg-leaf-900/30 text-leaf-400'
+                        : 'text-gray-400 hover:text-white hover:bg-forest-mid/60'
+                    }`
+                  }
+                >
+                  <span>{icon}</span> {label}
+                </NavLink>
+              ))}
+            </div>
             <div className="pt-3 border-t border-leaf-900/30">
               <Link
                 to="/detection"
