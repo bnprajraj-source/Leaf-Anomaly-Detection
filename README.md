@@ -2,6 +2,11 @@
 
 An AI-powered full-stack application for detecting plant leaf diseases using deep learning with **Attention Mechanism** and **Meta-Learning**.
 
+## Live Demo
+
+- **App:** [Open LeafScan](https://leaf-anomaly-frontend.onrender.com)
+- **Backend health:** [Check API status](https://leaf-anomaly-backend.onrender.com/health)
+
 ## Tech Stack
 
 | Layer     | Technologies                                           |
