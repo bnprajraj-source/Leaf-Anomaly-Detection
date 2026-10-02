@@ -10,6 +10,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Check SSH deployment configuration
+        id: ssh-config
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          DEPLOY_DIR: ${{ secrets.DEPLOY_DIR }}
+        run: |
+          if [ -n "$SSH_HOST" ] && [ -n "$SSH_USER" ] && [ -n "$SSH_PRIVATE_KEY" ] && [ -n "$DEPLOY_DIR" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::SSH deployment skipped. Configure SSH_HOST, SSH_USER, SSH_PRIVATE_KEY, and DEPLOY_DIR in repository Actions secrets."
+            echo "SSH deployment skipped because one or more required repository Actions secrets are missing." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v2
         with:
@@ -18,6 +34,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy via SSH
+        if: steps.ssh-config.outputs.configured == 'true'
         uses: appleboy/ssh-action@v0.1.9
         with:
           host: ${{ secrets.SSH_HOST }}
