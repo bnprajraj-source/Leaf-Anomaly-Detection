@@ -7,6 +7,8 @@ An AI-powered full-stack application for detecting plant leaf diseases using dee
 - **App:** [Open LeafScan](https://leaf-anomaly-frontend.onrender.com)
 - **Backend health:** [Check API status](https://leaf-anomaly-backend.onrender.com/health)
 
+The backend runs on Render's free tier and may sleep when idle. Its first request can take up to about a minute to wake; the frontend automatically retries Render's temporary cold-start responses.
+
 ## Tech Stack
 
 | Layer     | Technologies                                           |

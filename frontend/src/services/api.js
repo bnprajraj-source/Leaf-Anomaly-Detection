@@ -1,6 +1,8 @@
 import axios from 'axios'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || ''
+const COLD_START_RETRY_DELAY_MS = 10000
+const MAX_COLD_START_RETRIES = 6
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
@@ -25,7 +27,18 @@ apiClient.interceptors.request.use(
 // Response interceptor — handle errors
 apiClient.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
+    const contentType = error.response?.headers?.['content-type'] || ''
+    const isColdStartResponse =
+      error.response?.status === 503 && contentType.includes('text/html')
+    const retryCount = error.config?._coldStartRetryCount || 0
+
+    if (isColdStartResponse && error.config && retryCount < MAX_COLD_START_RETRIES) {
+      error.config._coldStartRetryCount = retryCount + 1
+      await new Promise((resolve) => setTimeout(resolve, COLD_START_RETRY_DELAY_MS))
+      return apiClient.request(error.config)
+    }
+
     if (error.response?.status === 401) {
       localStorage.removeItem('leaf_token')
       window.location.href = '/login'
